@@ -3,169 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhavik Plastic - Sales Tracker</title>
+    <title>Toy Sales Tracker</title>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="number"],
-        input[type="date"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 5px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .analysis-section {
-            margin-top: 20px;
-        }
-
-        .analysis-controls {
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .export-buttons {
-            margin-top: 20px;
-        }
-
-        .summary {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-        }
-    </style>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-analytics.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Bhavik Plastic - Sales Tracker</h1>
-
-        <!-- Sales Form -->
-        <div class="form-group">
-            <label for="units">Number of Units:</<input type="number" id="units" required>
-
-            <label for="sellingPrice">Selling Price per Unit:</label>
-            <input type="number" id="sellingPrice" step="0.01" required>
-
-            <label for="costPrice">Cost Price per Unit:</label>
-            <input type="number" id="costPrice" step="0.01" required>
-
-            <label for="date">Date:</label>
-            <input type="date" id="date" required>
-
-            <button onclick="saveSale()">Save Sale</button>
-        </div>
-
-        <!-- Analysis Section -->
-        <div class="analysis-section">
-            <div class="analysis-controls">
-                <label for="analysisType">Analysis Period:</label>
-                <select id="analysisType" onchange="updateAnalysis()">
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="quarterly">Quarterly</option>
-                    <option value="yearly">Yearly</option>
-                    <option value="custom">Custom</option>
-                </select>
-
-                <div id="customDateRange" style="display: none;">
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate">
-                    <label for="endDate">End Date:</label>
-                    <input type="date" id="endDate">
-                    <button onclick="updateAnalysis()">Apply</button>
-                </div>
-            </div>
-
-            <div class="summary" id="summary"></div>
-
-            <table id="salesTable">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Units</th>
-                        <th>Selling Price</th>
-                        <th>Cost Price</th>
-                        <th>Revenue</th>
-                        <th>Expenditure</th>
-                        <th>Net Income</th>
-                    </tr>
-                </thead>
-                <tbody id="salesData"></tbody>
-            </table>
-        </div>
-
-        <!-- Export Buttons -->
-        <div class="export-buttons">
-            <button onclick="exportData('excel')">Export to Excel</button>
-            <button onclick="exportData('csv')">Export to CSV</button>
-            <button onclick="exportData('pdf')">Export to PDF</button>
-            <button onclick="exportData('json')">Export to JSON</button>
-        </div>
+    <h1>Toy Sales Tracker</h1>
+    <form>
+        <label for="toyName">Toy Name:</label>
+        <input type="text" id="toyName" required>
+        <br>
+        <label for="units">Units Sold:</label>
+        <input type="number" id="units" required>
+        <br>
+        <label for="sellingPrice">Selling Price:</label>
+        <input type="number" id="sellingPrice" step="0.01" required>
+        <br>
+        <label for="paymentMethod">Payment Method:</label>
+        <select id="paymentMethod" required>
+            <option value="cash">Cash</option>
+            <option value="credit">Credit Card</option>
+            <option value="debit">Debit Card</optionselect>
+        <br>
+        <label for="date">Date:</label>
+        <input type="date" id="date" required>
+        <br>
+        <button type="button" onclick="saveSale()">Save Sale</button>
+    </form>
+    <hr>
+    <h2>Sales Analysis</h2>
+    <select id="analysisType" onchange="updateAnalysis()">
+        <option value="today">Today</option>
+        <option value="month">This Month</option>
+        <option value="year">This Year</option>
+        <option value="custom">Custom Date Range</option>
+    </select>
+    <div id="customDateRange" style="display: none;">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate">
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate">
     </div>
+    <br>
+    <button type="button" onclick="exportData('json')">Export to JSON</button>
+    <button type="button" onclick="exportData('excel')">Export to Excel</button>
+    <button type="button" onclick="exportData('pdf')">Export to PDF</button>
+    <br>
+    <table id="salesTable">
+        <thead>
+            <tr>
+                <th>Toy Name</th>
+                <th>Units Sold</th>
+                <th>Selling Price</th>
+                <th>Total Sales</th>
+                <th>Payment Method</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody id="salesData"></tbody>
+    </table>
+    <div id="paymentSummary"></div>
 
     <script>
         // Your web app's Firebase configuration
@@ -173,65 +71,78 @@
             apiKey: "AIzaSyCjHWF3l2viXFUCs8e7EwNpy0i82hWtis0",
             authDomain: "pro1-41035.firebaseapp.com",
             projectId: "pro1-41035",
-            storageBucket: "pro1-41035.firebasestorage.app",
-            messagingSenderId: "80430133341",
+            storageBucket: "pro1-41035.storage.googleapis.com",
+            messagingSenderId: "80430133341", 
             appId: "1:80430133341:web:db7a1a67ab4ac20d9dddb4",
             measurementId: "G-LWKWK2FZLD"
         };
-        
+
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        
-        // Get a reference to the database service
-        const database = firebase.database();
+        const db = firebase.firestore();
+        const analytics = firebase.analytics();
 
-        // Initialize sales data from localStorage or Firebase
+        // Initialize sales data from localStorage and Firestore
         let salesData = JSON.parse(localStorage.getItem('salesData')) || [];
 
-        // Load data from Firebase
-        database.ref('salesData').once('value', (snapshot) => {
-            if (snapshot.exists()) {
-                salesData = snapshot.val();
+        // Sync data with Firestore
+        function syncDataWithFirestore() {
+            db.collection("salesData").get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    const sale = doc.data();
+                    const existingSaleIndex = salesData.findIndex(s => s.id === doc.id);
+                    if (existingSaleIndex !== -1) {
+                        salesData[existingSaleIndex] = { id: doc.id, ...sale };
+                    } else {
+                        salesData.push({ id: doc.id, ...sale });
+                    }
+                });
                 localStorage.setItem('salesData', JSON.stringify(salesData));
                 updateAnalysis();
-            }
-        });
+            });
+        }
 
+        // Save sale datad Firestore
         function saveSale() {
+            const toyName = document.getElementById('toyName').value;
             const units = parseInt(document.getElementById('units').value);
-            const sellingPrice = parseFloat(lingPrice').value);
-            const costPrice = parseFloat(document.getElementById('costPrice').value);
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value);
+            const paymentMethod = document.getElementById('paymentMethod').value;
             const date = document.getElementById('date').value;
 
-            if (!units || !sellingPrice || !costPrice || !date) {
+            if (!toyName || !units || !sellingPrice || !paymentMethod || !date) {
                 alert('Please fill all fields');
                 return;
             }
 
             const sale = {
-                date: date,
-                units: units,
-                sellingPrice: sellingPrice,
-                costPrice: costPrice,
-                revenue: units * sellingPrice,
-                expenditure: units * costPrice,
-                netIncome: (units * sellingPrice) - (units * costPrice)
+                toyName,
+                units,
+                sellingPrice,
+                totalSales: units * sellingPrice,
+                paymentMethod,
+                date,
+                timestamp: Date.now()
             };
 
-            salesData.push(sale);
-            localStorage.setItem('salesData', JSON.stringify(salesData));
-            
-            // Save data to Firebase
-            database.ref('salesData').set(salesData);
-
-            updateAnalysis();
-            clearForm();
+            db.collection("salesData").add(sale)
+                .then((docRef) => {
+                    sale.id = docRef.id;
+                    salesData.push(sale);
+                    localStorage.setItem('salesData', JSON.stringify(salesData));
+                    updateAnalysis();
+                    clearForm();
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                });
         }
 
         function clearForm() {
+            document.getElementById('toyName').value = '';
             document.getElementById('units').value = '';
             document.getElementById('sellingPrice').value = '';
-            document.getElementById('costPrice').value = '';
+            document.getElementById('paymentMethod').value = '';
             document.getElementById('date').value = '';
         }
 
@@ -245,132 +156,83 @@
                 customDateRange.style.display = 'none';
             }
 
-            let filteredData = filterDataByPeriod(analysisType);
-            displayData(filteredData);
-            updateSummary(filteredData);
+            const data = filterDataByPeriod(analysisType);
+            renderSalesTable(data);
+            renderPaymentSummary(data);
         }
 
         function filterDataByPeriod(period) {
-            
-            const endDate = new Date();
-            const startDate = new Date();
+            const today = new Date().setHours(0, 0, 0, 0);
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
 
-            switch(period) {
-                case 'daily':
-                    startDate.setHours(0, 0, 0, 0);
-                    break;
-                case 'weekly':
-                    startDate.setDate(startDate.getDate() - 7);
-                    break;
-                case 'monthly':
-                    startDate.setMonth(startDate.getMonth() - 1);
-                    break;
-                case 'quarterly':
-                    startDate.setMonth(startDate.getMonth() - 3);
-                    break;
-                case 'yearly':
-                    startDate.setFullYear(startDate.getFullYear() - 1);
-                    break;
+            switch (period) {
+                case 'today':
+                    return salesData.filter(sale => new Date(sale.date).setHours(0, 0, 0, 0) === today);
+                case 'month':
+                    return salesData.filter(sale => new Date(sale.date).getMonth() === new Date().getMonth() &&
+                                                     new Date(sale.date).getFullYear() === new Date().getFullYear());
+                case 'year':
+                    return salesData.filter(sale => new Date(sale.date).getFullYear() === new Date().getFullYear());
                 case 'custom':
-                    const customStart = document.getElementById('startDate').value;
-                    const customEnd = document.getElementById('endDate').value;
-                    return salesData.filter(sale => 
-                        sale.date >= customStart && sale.date <= customEnd
-                    );
+                    return salesData.filter(sale => new Date(sale.date) >= new Date(startDate) &&
+                                                     new Date(sale.date) <= new Date(endDate));
+                default:
+                    return salesData;
             }
-            
-            return salesData.filter(sale => new Date(sale.date) >= startDate && new Date(sale.date) <= endDate);
         }
 
-        function displayData(data) {
-            const tbody = document.getElementById('salesData');
-            tbody.innerHTML = '';
+        function renderSalesTable(data) {
+            const salesDataElement = document.getElementById('salesData');
+            salesDataElement.innerHTML = '';
 
             data.forEach(sale => {
-                const row = tbody.insertRow();
+                const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${sale.date}</td>
-                    <td>${sale.units}</td>
+                    <td>${sale.toyName}</td>
+                    .units}</td>
                     <td>${sale.sellingPrice}</td>
-                    <td>${sale.costPrice}</td>
-                    <td>${sale.revenue}</td>
-                    <td>${sale.expenditure}</td>
-                    <td>${sale.netIncome}</td>
+                    <td>${sale.totalSales}</td>
+                    <td>${sale.paymentMethod}</td>
+                    <td>${sale.date}</td>
                 `;
+                salesDataElement.appendChild(row);
             });
         }
 
-        function updateSummary(data) {
-            const totalRevenue = data.reduce((sum, sale) => sum + sale.revenue, 0);
-            const totalExpenditure = data.reduce((sum, sale) => sum + sale.expenditure, 0);
-            const totalNetIncome = data.reduce((sum, sale) => sum + sale.netIncome, 0);
-            const totalUnits = data.reduce((sum, sale) => sum + sale.units
+        function renderPaymentSummary(data) {
+            const paymentMethods = ['cash', 'credit', 'debit'];
+            const paymentSummary = paymentMethods.map(method => {
+                const totalSales = data
+                    .filter(sale => sale.paymentMethod === method)
+                    .reduce((sum, sale) => sum + sale.totalSales, 0);
+                return `${method.charAt(0).toUpperCase() + method.slice(1)}: $${totalSales}`;
+            });
 
-            document.getElementById('summary').innerHTML = `
-                <h3>Summary</h3>
-                <p>Total Units Sold: ${totalUnits}</p>
-                <p>Total Revenue: ₹${totalRevenue.toFixed(2)}</p>
-                <p>Total Expenditure: ₹${totalExpenditure.toFixed(2)}</p>
-                <p>Total Net Income: ₹${totalNetIncome.toFixed(2)}</p>
+            const summaryHTML = `
+                <h3>Payment Summary</h3>
+                <p>${paymentSummary.join('<br>')}</p>
             `;
+
+            document.getElementById('paymentSummary').innerHTML = summaryHTML;
         }
 
         function exportData(format) {
             const data = filterDataByPeriod(document.getElementById('analysisType').value);
-            
-            switch(format) {
+
+            switch (format) {
+                case 'json':
+                    exportToJSON(data);
+                    break;
                 case 'excel':
                     exportToExcel(data);
-                    break;
-                case 'csv':
-                    exportToCSV(data);
                     break;
                 case 'pdf':
                     exportToPDF(data);
                     break;
-                case 'json':
-                    exportToJSON(data);
+                default:
                     break;
             }
-        }
-
-        function exportToCSV(data) {
-            const headers = ['Date', 'Units', 'Selling Price', 'Cost Price', 'Revenue', 'Expenditure', 'Net Income'];
-            const csvContent = [
-                headers.join(','),
-                ...data.map(row => [
-                    row.date,
-                    row.units,
-                    row.sellingPrice,
-                    row.costPrice,
-                    row.revenue,
-                    row.expenditure,
-                    row.netIncome
-                ].join(','))
-            ].join('\n');
-
-            downloadFile(csvContent, 'sales_data.csv', 'text/csv');
-        }
-
-        function exportToExcel(data) {
-            let xlsx = '<table>';
-            xlsx += '<tr><th>Date</th><th>Units</th><th>Selling Price</th><th>Cost Price</th><th>Revenue</th><th>Expenditure</th><th>Net Income</th></tr>';
-            
-            data.forEach(row => {
-                xlsx += `<tr>
-                    <td>${row.date}</td>
-                    <td>${row.units}</td>
-                    <td>${row.sellingPrice}</td>
-                    <td>${row.costPrice}</td>
-                    <td>${row.revenue}</td>
-                    <td>${row.expenditure}</td>
-                    <td>${row.netIncome}</td>
-                </tr>`;
-            });
-            
-            xlsx += '</table>';
-
-            downloadFile(xlsx, 'sales_data.xls', 'application/vnd.ms-excel');
         }
 
         function exportToJSON(data) {
@@ -378,9 +240,24 @@
             downloadFile(jsonContent, 'sales_data.json', 'application/json');
         }
 
+        function exportToExcel(data) {
+            let xlsx = '<table><tr><th>Toy Name</th><th>Units Sold</th><th>Selling Price</th><th>Total Sales</th><th>Payment Method</th><th>Date</th></tr>';
+            data.forEach(sale => {
+                xlsx += `<tr>
+                            <td>${sale.toyName}</td>
+                            <td>${sale.units}</td>
+                            <td>${sale.sellingPrice}</td>
+                            <td>${sale.totalSales}</td>
+                            <td>${sale.paymentMethod}</td>
+                            <td>${sale.date}</td>
+                        </tr>`;
+            });
+            xlsx += '</table>';
+
+            downloadFile(xlsx, 'sales_data.xls', 'application/vnd.ms-excel');
+        }
+
         function exportToPDF(data) {
-            // Note: This is a simple PDF export. For better PDF formatting,
-            // consider using libraries like [jsPDF](https://www.npmjs.com/package/jspdf)
             let printWindow = window.open('', '', 'height=400,width=800');
             printWindow.document.write('<html><head><title>Sales Data</title>');
             printWindow.document.write('</head><body>');
@@ -395,15 +272,16 @@
             const blob = new Blob([content], { type: contentType });
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
-            link.href = url;
+            link.
             link.download = fileName;
-            document.body.appendChild(link.click();
+            document.body.appendChild(link);
+            link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
         }
 
-        // Initialize the page
-        updateAnalysis();
+        // Initialize the page and sync data with Firestore
+        syncDataWithFirestore();
     </script>
 </body>
 </html>
